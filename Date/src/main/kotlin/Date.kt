@@ -6,12 +6,24 @@ class Date(
     val year: Int = 2025,
     val month: Int = 1,
     val day: Int = 1
-) {
+): Any() {
     init {
         require(year in GREGORIAN_YEAR..MAX_YEAR) { "Invalid year $year" }
         require(month in 1..dayOfMonth.size) { "Invalid month $month" }
         require(day in 1..lastDayOfMonth) { "Invalid day $day" }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Date) return false
+        return other.year==year && other.month==month && other.day==day
+    }
+
+    override fun hashCode(): Int = (year*16 + month)*32 + day
+
+    override fun toString(): String =
+        //this::class.simpleName + "@" + hashCode().toString(16)
+        "$year-" + "%02d-%02d".format(month,day)
+
     //constructor(): this(2025,1,1)
     //val leapYear: Boolean get() = year.isLeapYear
 }
@@ -43,6 +55,11 @@ tailrec fun fact(n: Int, r: Int = 1): Int =
     else fact(n-1,r*n)
 
 
+operator fun Date.compareTo(d: Date) = when {
+    year != d.year -> year - d.year
+    month != d.month -> month - d.month
+    else -> day - d.day
+}
 
 
 

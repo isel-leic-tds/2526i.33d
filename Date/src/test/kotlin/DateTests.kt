@@ -57,6 +57,33 @@ class DateTests {
         assertEquals(1,sut.month)
         assertEquals(2026,sut.year)
     }
+    @Test fun `Equality of dates`() {
+        val sut = Date(2025,9,19)
+        //println(sut)
+        // a == b  -->  a.equals(b)
+        //println( sut == Date(2025,9,19) )
+        assertEquals(sut,sut)
+        assertEquals(Date(2025,9,19),sut)
+        assertFalse(sut.equals("ABC"))
+        assertFalse(sut.equals(null))
+
+        assertEquals(Date(2025,9,19).hashCode(),sut.hashCode())
+        assertNotEquals((sut+1).hashCode(), sut.hashCode())
+    }
+    @Test fun `relative comparation dates`() {
+        val sut = Date(2025,9,19)
+        assertTrue( Date(2025,11,1) > sut)
+        assertTrue( Date(2024,11,1) < sut)
+        assertTrue( Date(2025,9,1) < sut)
+
+        // a > b --> a.compareTo(b) > 0
+    }
+    @Test fun `text representation of date`() {
+        val sut = Date(2025,9,19)
+        assertEquals("2025-09-19",sut.toString())
+        println(sut)
+    }
+
 
     @Test fun factorial() {
         assertEquals(1,fact(1))
