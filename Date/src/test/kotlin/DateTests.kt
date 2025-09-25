@@ -75,20 +75,11 @@ class DateTests {
         assertTrue( Date(2025,11,1) > sut)
         assertTrue( Date(2024,11,1) < sut)
         assertTrue( Date(2025,9,1) < sut)
-
         // a > b --> a.compareTo(b) > 0
     }
     @Test fun `text representation of date`() {
         val sut = Date(2025,9,19)
         assertEquals("2025-09-19",sut.toString())
-        println(sut)
-    }
-
-
-    @Test fun factorial() {
-        assertEquals(1,fact(1))
-        assertEquals(2,fact(2))
-        assertEquals(6,fact(3))
-        assertEquals(24,fact(4))
+        // println(sut)
     }
 }
