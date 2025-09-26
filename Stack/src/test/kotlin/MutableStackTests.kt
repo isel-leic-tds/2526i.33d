@@ -35,5 +35,6 @@ class MutableStackTests {
         s2.push("TDS"); s2.push("ISEL")
         assertEquals(s2,s1)
         assertTrue(s1.equals(s2))
+        assertTrue(MutableStack<Char>() == MutableStack<Int>())
     }
 }

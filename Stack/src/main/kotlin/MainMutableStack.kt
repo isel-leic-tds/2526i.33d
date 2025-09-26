@@ -1,5 +1,5 @@
 fun main() {
-    val stk = MutableStack<Char>()
+    val stk = MutableStack2<Char>()
     stk.push('A')
     stk.push('B')
     print(stk.top)
