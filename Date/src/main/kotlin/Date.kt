@@ -15,9 +15,9 @@ value class Date private constructor(private val bits: Int) {
     constructor(y: Int = 2025, m: Int = 1, d: Int = 1)
         :this((y shl (DAY_BITS+MONTH_BITS)) or (m shl DAY_BITS) or d)
     {
-        require(y in GREGORIAN_YEAR..MAX_YEAR) { "Invalid year $year" }
-        require(m in 1..dayOfMonth.size) { "Invalid month $month" }
-        require(d in 1..lastDayOfMonth) { "Invalid day $day" }
+        require(y in GREGORIAN_YEAR..MAX_YEAR) { "Invalid year $y" }
+        require(m in 1..dayOfMonth.size) { "Invalid month $m" }
+        require(d in 1..lastDayOfMonth) { "Invalid day $d" }
     }
     override fun toString(): String =
         "$year-" + "%02d-%02d".format(month,day)
