@@ -12,9 +12,12 @@ fun Player?.toChar() = when(this) {
 }
 
 fun Game.show() {
-    board.chunked(BOARD_SIZE).forEachIndexed { idx, row ->
-        println( row.joinToString("|") { " ${it.toChar()} " })
-        if (idx<BOARD_SIZE-1) println(separator)
+    Position.values
+        .map{ board[it] }
+        .chunked(BOARD_SIZE)
+        .forEachIndexed { idx, row ->
+            println( row.joinToString("|") { " ${it.toChar()} " })
+            if (idx<BOARD_SIZE-1) println(separator)
     }
     println( when {
         isWinner(CROSS) -> "Winner X"

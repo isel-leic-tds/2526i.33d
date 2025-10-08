@@ -12,7 +12,7 @@ open class Command(
 object Play: Command("<position>") {
     override fun execute(args: List<String>, game: Game?): Game {
         val arg = requireNotNull(args.firstOrNull()) { "Missing position" }
-        val pos = requireNotNull(arg.toIntOrNull()) { "Invalid position $arg" }
+        val pos = requireNotNull(arg.toPositionOrNull()) { "Invalid position $arg" }
         return checkNotNull(game) { "Game not created" }.play(pos)
     }
 }
