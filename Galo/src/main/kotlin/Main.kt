@@ -2,8 +2,9 @@ import model.*
 import console.*
 
 fun main() {
-    var game: Game? = null
+    var game = Game()
     val cmds: Map<String,Command> = getCommands()
+    game.show()
     while(true) {
         val (name, args) = readCommand()
         val cmd = cmds[name]
@@ -11,7 +12,7 @@ fun main() {
         else try {
             game = cmd.execute(args,game)
             if (cmd.isTerminate) return
-            game?.show()
+            game.show()
         } catch (ex: IllegalArgumentException) {
             println(ex.message)
             println("Use: $name ${cmd.syntaxArgs}")

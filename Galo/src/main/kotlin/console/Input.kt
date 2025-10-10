@@ -8,5 +8,3 @@ tailrec fun readCommand(): LineCommand {
     return if (line.isEmpty()) readCommand()
     else LineCommand(line.first().uppercase(), line.drop(1))
 }
-
-

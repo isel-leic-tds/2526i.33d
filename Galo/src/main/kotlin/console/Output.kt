@@ -19,10 +19,13 @@ fun Game.show() {
             println( row.joinToString("|") { " ${it.toChar()} " })
             if (idx<BOARD_SIZE-1) println(separator)
     }
-    println( when {
-        isWinner(CROSS) -> "Winner X"
-        isWinner(BALL) -> "Winner O"
-        isDraw() -> "Draw"
-        else -> "Turn: ${turn.toChar()}"
+    println( when (state) {
+        is Win -> "Winner ${state.winner.toChar()}"
+        is Draw -> "Draw"
+        is Run -> "Turn: ${state.turn.toChar()}"
     } )
 }
+
+fun Score.show() = entries
+        .map{ (k,v) -> "${k?.toChar() ?: "Draw"} = $v" }
+        .forEach(::println)
