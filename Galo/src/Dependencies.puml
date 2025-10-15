@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+skinparam componentStyle rectangle
+
+package model {
+  [Game.kt] ..> [Position.kt]
+  [Game.kt] ..> [Player.kt]
+}
+
+package console {
+  [Main.kt] ..> [Command.kt]
+  [Main.kt] ...> [Input.kt]
+  [Main.kt] ..> [Output.kt]
+  [Command.kt] ..> [Output.kt]
+}
+
+[Command.kt] --> [Game.kt]
+[Main.kt] --> [Game.kt]
+
+@enduml
