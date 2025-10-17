@@ -9,12 +9,14 @@ interface Storage<Key,Data> {
      * @throws IllegalStateException if the key already exists.
      */
     fun create(k: Key, data: Data)
+
     /**
      * Reads an entry from the storage.
      * @param k the key of the entry.
      * @return the data stored or null if the key does not exist.
      */
     fun read(k: Key): Data?
+
     /**
      * Updates an entry in the storage.
      * @param k the key of the entry.
@@ -22,6 +24,7 @@ interface Storage<Key,Data> {
      * @throws IllegalStateException if the key does not exist.
      */
     fun update(k: Key, data: Data)
+
     /**
      * Deletes an entry from the storage.
      * @param k the key of the entry.
