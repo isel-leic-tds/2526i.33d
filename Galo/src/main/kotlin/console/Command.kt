@@ -1,6 +1,9 @@
 package console
 
 import model.*
+import storage.Storage
+
+typealias GameStorage = Storage<String,Game>
 
 class Command (
     val syntaxArgs: String = "",
@@ -14,11 +17,18 @@ val Play = Command("<position>") { args, game ->
     game.play(pos)
 }
 
-fun getCommands() = mapOf(
+fun storageCommand(fx: (String, Game)->Game) = Command("<name>") { args, game ->
+    val name = requireNotNull(args.firstOrNull()) { "Missing name" }
+    fx(name,game)
+}
+
+fun getCommands(gs: GameStorage) = mapOf(
     "EXIT" to Command(isTerminate = true),
     "NEW" to Command{ _, g -> g.new() },
     "PLAY" to Play,
     "SCORE" to Command { _, g -> g.also{ it.score.show() } },
+    "SAVE" to storageCommand { name, game -> game.also{ gs.create(name,game) } },
+    "LOAD" to storageCommand { name, _ -> checkNotNull(gs.read(name)) { "Game $name not found"} }
 )
 
 /*

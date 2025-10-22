@@ -1,10 +1,12 @@
 package console
 
 import model.*
+import storage.TextFileStorage
 
 fun main() {
+    val gameStorage = TextFileStorage<String,Game>("games", GameSerializer)
     var game = Game()
-    val cmds: Map<String,Command> = getCommands()
+    val cmds: Map<String,Command> = getCommands(gameStorage)
     game.show()
     while(true) {
         val (name, args) = readCommand()
