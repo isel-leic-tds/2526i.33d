@@ -21,4 +21,18 @@ Run -up-> Player : turn
 GameState <|-- Draw
 GameState <|-- Win
 Win -up-> Player : winner
+
+class Score <<(T)>>
+Game --> Score : score
+Score -[hidden] GameState
+
+
+
+
+'Clash <|-- ClashRun
+Clash --> Game : game
+Name <- Clash : name
+Clash -> Player : side
+Clash -> GameStorage
+class GameStorage <<(T)>>
 @enduml

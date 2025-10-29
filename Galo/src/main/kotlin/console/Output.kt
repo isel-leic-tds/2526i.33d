@@ -29,3 +29,6 @@ fun Game.show() {
 fun Score.show() = entries
         .map{ (k,v) -> "${k?.toChar() ?: "Draw"} = $v" }
         .forEach(::println)
+
+fun Clash.show() =
+    (this as? ClashRun)?.game?.show()
