@@ -12,7 +12,9 @@ fun main() {
         val cmd = cmds[name]
         if (cmd == null) println("Invalid command $name")
         else try {
-            clash = cmd.execute(args,clash)
+            //clash = with(cmd) { clash.execute(args) }
+            //clash = cmd.execute(clash,args)
+            clash = clash.(cmd.execute)(args)
             if (cmd.isTerminate) return
             clash.show()
         } catch (ex: IllegalArgumentException) {

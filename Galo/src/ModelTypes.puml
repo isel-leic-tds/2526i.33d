@@ -29,10 +29,10 @@ Score -[hidden] GameState
 
 
 
-'Clash <|-- ClashRun
-Clash --> Game : game
-Name <- Clash : name
-Clash -> Player : side
-Clash -> GameStorage
+Clash <|-- ClashRun
+ClashRun --> Game : game
+Name <- ClashRun : name
+ClashRun -> Player : side
+Clash -> GameStorage : gs
 class GameStorage <<(T)>>
 @enduml

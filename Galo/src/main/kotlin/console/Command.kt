@@ -15,20 +15,19 @@ val Play = Command("<position>") { args ->
     play(pos)
 }
 
-/*
-fun storageCommand(fx: (String, Game)->Game) = Command("<name>") { args, game ->
-    val name = requireNotNull(args.firstOrNull()) { "Missing name" }
-    fx(name,game)
+fun clashCommand(fx: Clash.(Name)->Clash) = Command("<name>") { args ->
+    val arg = requireNotNull(args.firstOrNull()) { "Missing name" }
+    fx(Name(arg))
 }
-*/
 
 fun getCommands() = mapOf(
-    "EXIT" to Command(isTerminate = true),
+    "EXIT" to Command(isTerminate = true) { deleteIfOwner(); this },
     "NEW" to Command{ new() },
     "PLAY" to Play,
     "SCORE" to Command { this.also { (it as? ClashRun)?.game?.score?.show() } },
-//    "SAVE" to storageCommand { name, game -> game.also{ gs.create(name,game) } },
-//    "LOAD" to storageCommand { name, _ -> checkNotNull(gs.read(name)) { "Game $name not found"} }
+    "START" to clashCommand { start(it).also { deleteIfOwner() } },
+    "JOIN" to clashCommand { join(it).also { deleteIfOwner() } },
+    "REFRESH" to Command{ refresh() }
 )
 
 /*
