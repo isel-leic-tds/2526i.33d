@@ -5,13 +5,15 @@ const val BOARD_SIZE = 3
 const val BOARD_CELLS = BOARD_SIZE*BOARD_SIZE
 
 typealias Board = Map<Position, Player>
+fun Board(): Board = emptyMap()
+
 typealias Score = Map<Player?, Int>
 
 fun Score.advance(player: Player?) = plus(player to getValue(player)+1)
 
 data class Game(
     val first: Player = CROSS,
-    val board: Board = emptyMap(),
+    val board: Board = Board(),
     val state: GameState = Run(first),
     val score: Score = (entries + null).associateWith { 0 }
 )
