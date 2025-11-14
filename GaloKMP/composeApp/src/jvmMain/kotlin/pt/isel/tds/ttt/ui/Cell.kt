@@ -33,10 +33,10 @@ fun CellTest() {
 @Composable
 fun Cell(
     player: Player?,
-    modifier: Modifier = Modifier.size(CELL_SIDE),
+    modifier: Modifier = Modifier.size(CELL_SIDE).background(Color.White),
     onClickInEmpty: ()->Unit = { }
 ) {
-    val mod = modifier.background(Color.White)
+    val mod = modifier
     if (player==null) Box(mod.clickable(onClick = onClickInEmpty))
     else {
         val resource = when (player) {
