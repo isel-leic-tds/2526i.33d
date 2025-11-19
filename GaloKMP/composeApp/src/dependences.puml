@@ -1,0 +1,22 @@
+@startuml
+
+skinparam componentStyle rectangle
+
+package ui {
+[App] .> [AppViewModel]
+[App]..>[Grid]
+[App]..>[StatusBar]
+[App]..>[ScoreInfo]
+[Grid] ..> [Cell]
+[StatusBar] ..> [Cell]
+[ScoreInfo] ..> [Cell]
+}
+
+package model {
+[Game] ..> [Player]
+[Game] ..> [Position]
+}
+
+[AppViewModel] -> [Game]
+
+@enduml
