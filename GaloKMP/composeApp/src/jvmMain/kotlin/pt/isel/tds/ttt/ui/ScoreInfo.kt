@@ -1,24 +1,17 @@
 package pt.isel.tds.ttt.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import pt.isel.tds.ttt.model.*
 
 @Composable
-fun ScoreInfo(score: Score, onClose: ()->Unit ) = AlertDialog(
+fun ScoreInfo(score: Score, name: Name, onClose: ()->Unit ) = AlertDialog(
     onDismissRequest = onClose,
-    title = { Text("Score") },
+    title = { Text("Score of $name") },
     text = { Placard(score) },
     confirmButton = { Button(onClick = onClose){ Text("Close") } }
 )
@@ -40,7 +33,7 @@ fun Placard(score: Score) {
         Column {
             Player.entries.forEach {
                 Row {
-                    Cell(it, Modifier.size(40.dp))
+                    Cell(it, Modifier.size(50.dp).padding(2.dp))
                     Text(" - ${score[it]}", style = style)
                 }
             }

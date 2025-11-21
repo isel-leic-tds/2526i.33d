@@ -16,10 +16,11 @@ open class Clash(val gs: GameStorage) {
     open fun refresh(): Clash = notStarted()
     fun start(name: Name) = ClashRun(
         gs, name, Player.CROSS, Game().also { gs.create(name,it) }
-    )
+    ).also { deleteIfOwner() }
     fun join(name: Name) = ClashRun(
         gs, name, Player.BALL, gs.read(name) ?: error("Game not found")
-    )
+    ).also { deleteIfOwner() }
+    open fun finish() { }
 }
 
 /**
@@ -41,12 +42,14 @@ class ClashRun(
         }
     override fun new(): ClashRun {
         check(newAvailable()) { "new not available" }
-        return copy(game = game.new()).also { gs.create(name, it.game) }
+        return copy(game = game.new()).also { gs.update(name, it.game) }
     }
     override fun refresh() =
         copy( gs.read(name)?.also { check(it != game) { "No changes" } }
             ?: error("Game not found")
         )
+
+    override fun finish() { deleteIfOwner() }
 }
 
 fun ClashRun.copy(game: Game = this.game) =

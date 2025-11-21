@@ -1,16 +1,11 @@
 package pt.isel.tds.ttt.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.*
-import androidx.compose.ui.window.MenuBar
 import galokmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 
@@ -22,25 +17,28 @@ fun FrameWindowScope.App(onExit: ()->Unit) {
         Menu("Game") {
             Item("start clash", onClick = vm::start)
             Item("join clash", onClick = vm::join)
-            Item("new board", onClick = vm::newBoard )
-            Item("score", onClick = vm::showScore)
-            Item("exit", onClick = onExit)
+            Item("refresh", enabled = vm.isRun , onClick = vm::refresh)
+            Item("new board", enabled = vm.newAvailable ,onClick = vm::newBoard )
+            Item("score", enabled = vm.isRun , onClick = vm::showScore)
+            Item("exit", onClick = { vm.finish(); onExit() })
         }
     }
     MaterialTheme {
         if (vm.isRun) Column {
             Grid(vm.game.board, onClick = vm::play)
-            StatusBar(vm.game.state)
+            StatusBar(vm.game.state, vm.you)
         }
-        else Box(Modifier.width(GRID_SIDE).height(GRID_SIDE+STATUS_HEIGHT))
-        if (vm.viewScore) ScoreInfo(vm.game.score, onClose= vm::hideScore)
+        else
+            Box(Modifier.width(GRID_SIDE).height(GRID_SIDE+STATUS_HEIGHT))
+        if (vm.viewScore) ScoreInfo(vm.game.score, vm.name, onClose= vm::hideScore)
         vm.editMode?.let{ EditDialog(it, vm::cancelEdit, vm::doAction ) }
+        vm.message?.let{ MessageInfo(it, vm::clearMessage) }
     }
 }
 
 fun main() = application {
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {}, //::exitApplication,
         title = "GaloKMP",
         icon = painterResource(Res.drawable.cross),
         state = WindowState(size= DpSize.Unspecified),

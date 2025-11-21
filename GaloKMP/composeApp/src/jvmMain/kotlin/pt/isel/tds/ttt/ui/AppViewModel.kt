@@ -11,39 +11,71 @@ enum class EditMode(val text: String) {
 class AppViewModel {
     private val storage = TextFileStorage<Name,_>("games", GameSerializer)
 
+    /**
+     * Clash state (Clash or ClashRun)
+     */
     var clash by mutableStateOf(Clash(storage))
-    private set
-
+        private set
     val isRun get() = clash is ClashRun
 
-    var editMode by mutableStateOf<EditMode?>(null)
-    private set
+    fun newBoard() = oper { new() }
+    fun play(pos: Position) {
+        if (game.state is Run) oper { play(pos) }
+    }
+    fun doAction(name: Name) {
+        oper {
+            if (editMode == EditMode.START) start(name)
+            else join(name)
+        }
+        editMode = null
+    }
+    fun refresh() = oper { refresh() }
+    fun finish() { clash.finish() }
 
+    /**
+     * Indicates if the edit dialog is being shown
+     */
+    var editMode by mutableStateOf<EditMode?>(null)
+        private set
     fun start() { editMode = EditMode.START }
     fun join() { editMode = EditMode.JOIN }
     fun cancelEdit() { editMode = null }
-    fun doAction(name: Name) {
-        clash = if (editMode== EditMode.START) clash.start(name)
-                else clash.join(name)
-        editMode = null
-    }
 
     /**
-     * The current game state
+     * Properties to access ClashRun info
      */
     val game get() = (clash as ClashRun).game
+    val you get() = (clash as ClashRun).side
+    val newAvailable get() = (clash as? ClashRun)?.newAvailable() ?: false
+    val name get() = (clash as ClashRun).name
 
-    fun play(pos: Position) {
-        if (game.state is Run) clash = clash.play(pos)
+    /**
+     * Performs an operation on the clash, catching exceptions to set the message property
+     */
+    private fun oper(op: Clash.()->Clash ) {
+        try {
+            clash = clash.op()
+        } catch (ex: Exception) {
+            if (ex is IllegalStateException || ex is IllegalArgumentException)
+                message = ex.message
+            else throw ex
+        }
     }
-    fun newBoard() { clash = clash.new() }
 
     /**
      * Indicates if the score info dialog is being shown
      */
     var viewScore by mutableStateOf(false)
-    private set
-
+        private set
     fun showScore() { viewScore = true }
     fun hideScore() { viewScore = false }
+
+    /**
+     * Message
+     */
+    var message: String? by mutableStateOf(null)
+        private set
+    fun clearMessage() { message=null }
 }
+
+

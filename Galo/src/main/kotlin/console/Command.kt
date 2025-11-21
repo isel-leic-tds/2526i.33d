@@ -21,12 +21,12 @@ fun clashCommand(fx: Clash.(Name)->Clash) = Command("<name>") { args ->
 }
 
 fun getCommands() = mapOf(
-    "EXIT" to Command(isTerminate = true) { deleteIfOwner(); this },
+    "EXIT" to Command(isTerminate = true) { finish(); this },
     "NEW" to Command{ new() },
     "PLAY" to Play,
     "SCORE" to Command { this.also { (it as? ClashRun)?.game?.score?.show() } },
-    "START" to clashCommand { start(it).also { deleteIfOwner() } },
-    "JOIN" to clashCommand { join(it).also { deleteIfOwner() } },
+    "START" to clashCommand { start(it) },
+    "JOIN" to clashCommand { join(it) },
     "REFRESH" to Command{ refresh() }
 )
 
