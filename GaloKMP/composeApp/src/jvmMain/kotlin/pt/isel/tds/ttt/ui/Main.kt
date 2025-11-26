@@ -12,12 +12,13 @@ import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun FrameWindowScope.App(onExit: ()->Unit) {
-    val vm = remember { AppViewModel() }
+    val scope = rememberCoroutineScope()
+    val vm = remember { AppViewModel(scope) }
     MenuBar {
         Menu("Game") {
             Item("start clash", onClick = vm::start)
             Item("join clash", onClick = vm::join)
-            Item("refresh", enabled = vm.isRun , onClick = vm::refresh)
+            //Item("refresh", enabled = vm.isRun , onClick = vm::refresh)
             Item("new board", enabled = vm.newAvailable ,onClick = vm::newBoard )
             Item("score", enabled = vm.isRun , onClick = vm::showScore)
             Item("exit", onClick = { vm.finish(); onExit() })
@@ -33,6 +34,7 @@ fun FrameWindowScope.App(onExit: ()->Unit) {
         if (vm.viewScore) ScoreInfo(vm.game.score, vm.name, onClose= vm::hideScore)
         vm.editMode?.let{ EditDialog(it, vm::cancelEdit, vm::doAction ) }
         vm.message?.let{ MessageInfo(it, vm::clearMessage) }
+        if (vm.isWaiting) WaitingIndicator()
     }
 }
 

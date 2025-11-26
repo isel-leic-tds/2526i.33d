@@ -13,7 +13,7 @@ open class Clash(val gs: GameStorage) {
     private fun notStarted(): Nothing = error("Clash not started")
     open fun play(pos: Position): Clash = notStarted()
     open fun new(): Clash = notStarted()
-    open fun refresh(): Clash = notStarted()
+    open fun refresh(auto :Boolean = false): Clash = notStarted()
     fun start(name: Name) = ClashRun(
         gs, name, Player.CROSS, Game().also { gs.create(name,it) }
     ).also { deleteIfOwner() }
@@ -44,8 +44,9 @@ class ClashRun(
         check(newAvailable()) { "new not available" }
         return copy(game = game.new()).also { gs.update(name, it.game) }
     }
-    override fun refresh() =
-        copy( gs.read(name)?.also { check(it != game) { "No changes" } }
+    override fun refresh(auto: Boolean) =
+        copy( gs.read(name)
+            ?.also { check(auto || it != game) { "No changes" } }
             ?: error("Game not found")
         )
 

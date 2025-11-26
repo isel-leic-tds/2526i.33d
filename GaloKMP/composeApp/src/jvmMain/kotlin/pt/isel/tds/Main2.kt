@@ -14,21 +14,21 @@ import kotlinx.coroutines.*
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
         val scope = rememberCoroutineScope()
-        var clickable by remember { mutableStateOf(true) }
+        //var clickable by remember { mutableStateOf(true) }
+        var job: Job? by remember { mutableStateOf(null) }
+        val clickable = job==null
         Row {
             Button(enabled = clickable, onClick = {
                 println("Clicked")
-                clickable = false
-                scope.launch {
-                    repeat(5) {
-                        print(".")
-                        delay(1000)
-                    }
-                    clickable = true
+                job = scope.launch {
+                    repeat(5) { print(".")
+                        delay(1000) }
+                    job = null
                 }
             } ) { Text("Click me") }
             Button(enabled = !clickable, onClick = {
-                clickable = true
+                job?.cancel()
+                job = null
             } ) { Text("Enable Click") }
         }
     }

@@ -1,6 +1,10 @@
 package pt.isel.tds.ttt.ui
 
 import androidx.compose.runtime.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import pt.isel.tds.storage.TextFileStorage
 import pt.isel.tds.ttt.model.*
 
@@ -8,7 +12,7 @@ enum class EditMode(val text: String) {
     START("Start"), JOIN("Join")
 }
 
-class AppViewModel {
+class AppViewModel(val scope: CoroutineScope) {
     private val storage = TextFileStorage<Name,_>("games", GameSerializer)
 
     /**
@@ -18,19 +22,28 @@ class AppViewModel {
         private set
     val isRun get() = clash is ClashRun
 
-    fun newBoard() = oper { new() }
+    fun newBoard() {
+        oper { new() }
+        waitForOther()
+    }
     fun play(pos: Position) {
         if (game.state is Run) oper { play(pos) }
+        waitForOther()
     }
     fun doAction(name: Name) {
+        cancelWaiting()
         oper {
             if (editMode == EditMode.START) start(name)
             else join(name)
         }
         editMode = null
+        waitForOther()
     }
-    fun refresh() = oper { refresh() }
-    fun finish() { clash.finish() }
+    //fun refresh() = oper { refresh() }
+    fun finish() {
+        cancelWaiting()
+        clash.finish()
+    }
 
     /**
      * Indicates if the edit dialog is being shown
@@ -76,6 +89,27 @@ class AppViewModel {
     var message: String? by mutableStateOf(null)
         private set
     fun clearMessage() { message=null }
+
+    /**
+     * Auto-refresh job
+     */
+    private var job by mutableStateOf<Job?>(null)
+    val isWaiting get() = job != null
+
+    fun cancelWaiting() {
+        job?.cancel()
+        job = null
+    }
+    private fun waitForOther() {
+        if (clash !is ClashRun || newAvailable) return
+        job = scope.launch {
+            do {
+                delay(3000)
+                oper { refresh(auto=true) }
+            } while (!newAvailable)
+            job = null
+        }
+    }
 }
 
 
