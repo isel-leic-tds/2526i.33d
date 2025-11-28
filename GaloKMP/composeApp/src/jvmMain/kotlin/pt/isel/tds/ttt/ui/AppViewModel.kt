@@ -7,6 +7,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.isel.tds.storage.TextFileStorage
 import pt.isel.tds.ttt.model.*
+import pt.isel.tds.ttt.model.Clash
+import pt.isel.tds.ttt.model.GameNotFoundException
 
 enum class EditMode(val text: String) {
     START("Start"), JOIN("Join")
@@ -24,11 +26,12 @@ class AppViewModel(val scope: CoroutineScope) {
 
     fun newBoard() {
         oper { new() }
-        waitForOther()
     }
     fun play(pos: Position) {
-        if (game.state is Run) oper { play(pos) }
-        waitForOther()
+        if (game.state is Run && !isWaiting) {
+            oper { play(pos) }
+            waitForOther()
+        }
     }
     fun doAction(name: Name) {
         cancelWaiting()
@@ -69,8 +72,9 @@ class AppViewModel(val scope: CoroutineScope) {
         try {
             clash = clash.op()
         } catch (ex: Exception) {
-            if (ex is IllegalStateException || ex is IllegalArgumentException)
+            if (ex is IllegalStateException || ex is IllegalArgumentException) {
                 message = ex.message
+            }
             else throw ex
         }
     }
@@ -96,7 +100,7 @@ class AppViewModel(val scope: CoroutineScope) {
     private var job by mutableStateOf<Job?>(null)
     val isWaiting get() = job != null
 
-    fun cancelWaiting() {
+    private fun cancelWaiting() {
         job?.cancel()
         job = null
     }
@@ -105,7 +109,17 @@ class AppViewModel(val scope: CoroutineScope) {
         job = scope.launch {
             do {
                 delay(3000)
-                oper { refresh(auto=true) }
+                try {
+                    clash = clash.refresh(auto = true)
+                } catch (ex: Exception) {
+                    if (ex is IllegalStateException || ex is IllegalArgumentException) {
+                        message = ex.message
+                        if (ex is GameNotFoundException) {
+                            clash = Clash(storage)
+                            break
+                        }
+                    } else throw ex
+                }
             } while (!newAvailable)
             job = null
         }

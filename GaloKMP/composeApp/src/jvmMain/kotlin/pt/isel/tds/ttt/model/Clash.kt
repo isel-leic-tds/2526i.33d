@@ -1,5 +1,7 @@
 package pt.isel.tds.ttt.model
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import pt.isel.tds.storage.Storage
 
 typealias GameStorage = Storage<Name,Game>
@@ -13,7 +15,7 @@ open class Clash(val gs: GameStorage) {
     private fun notStarted(): Nothing = error("Clash not started")
     open fun play(pos: Position): Clash = notStarted()
     open fun new(): Clash = notStarted()
-    open fun refresh(auto :Boolean = false): Clash = notStarted()
+    open suspend fun refresh(auto :Boolean = false): Clash = notStarted()
     fun start(name: Name) = ClashRun(
         gs, name, Player.CROSS, Game().also { gs.create(name,it) }
     ).also { deleteIfOwner() }
@@ -44,10 +46,10 @@ class ClashRun(
         check(newAvailable()) { "new not available" }
         return copy(game = game.new()).also { gs.update(name, it.game) }
     }
-    override fun refresh(auto: Boolean) =
-        copy( gs.read(name)
+    override suspend fun refresh(auto: Boolean) =
+        copy( gs.slowRead(name)
             ?.also { check(auto || it != game) { "No changes" } }
-            ?: error("Game not found")
+            ?: throw GameNotFoundException()
         )
 
     override fun finish() { deleteIfOwner() }
@@ -63,5 +65,16 @@ fun Clash.deleteIfOwner() {
 fun ClashRun.newAvailable() =
     side == when(val state = game.state) {
         is Run -> state.turn
-        else -> game.first
+        else -> game.first.other
     }
+
+class GameNotFoundException : IllegalStateException("Game not found")
+
+suspend fun GameStorage.slowRead(name: Name): Game? {
+    //println(Thread.currentThread().name)
+    return withContext(Dispatchers.IO) {
+        //println(Thread.currentThread().name)
+        Thread.sleep(5000)
+        read(name)
+    } //.also { println(Thread.currentThread().name) }
+}

@@ -9,7 +9,6 @@ import androidx.compose.ui.window.*
 import galokmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 
-
 @Composable
 fun FrameWindowScope.App(onExit: ()->Unit) {
     val scope = rememberCoroutineScope()
@@ -18,7 +17,6 @@ fun FrameWindowScope.App(onExit: ()->Unit) {
         Menu("Game") {
             Item("start clash", onClick = vm::start)
             Item("join clash", onClick = vm::join)
-            //Item("refresh", enabled = vm.isRun , onClick = vm::refresh)
             Item("new board", enabled = vm.newAvailable ,onClick = vm::newBoard )
             Item("score", enabled = vm.isRun , onClick = vm::showScore)
             Item("exit", onClick = { vm.finish(); onExit() })
