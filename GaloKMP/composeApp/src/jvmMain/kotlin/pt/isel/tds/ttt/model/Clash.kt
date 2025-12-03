@@ -74,7 +74,7 @@ suspend fun GameStorage.slowRead(name: Name): Game? {
     //println(Thread.currentThread().name)
     return withContext(Dispatchers.IO) {
         //println(Thread.currentThread().name)
-        Thread.sleep(5000)
+        //Thread.sleep(5000)
         read(name)
     } //.also { println(Thread.currentThread().name) }
 }

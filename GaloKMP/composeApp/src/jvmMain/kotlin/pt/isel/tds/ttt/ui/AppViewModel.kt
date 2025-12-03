@@ -5,7 +5,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import pt.isel.tds.storage.MongoStorage
 import pt.isel.tds.storage.TextFileStorage
+import pt.isel.tds.storage.mongo.MongoDriver
 import pt.isel.tds.ttt.model.*
 import pt.isel.tds.ttt.model.Clash
 import pt.isel.tds.ttt.model.GameNotFoundException
@@ -16,6 +18,8 @@ enum class EditMode(val text: String) {
 
 class AppViewModel(val scope: CoroutineScope) {
     private val storage = TextFileStorage<Name,_>("games", GameSerializer)
+    private val driver = MongoDriver("galo")
+    //private val storage = MongoStorage<Name,_>("games",driver,GameSerializer)
 
     /**
      * Clash state (Clash or ClashRun)
@@ -46,6 +50,7 @@ class AppViewModel(val scope: CoroutineScope) {
     fun finish() {
         cancelWaiting()
         clash.finish()
+        driver.close()
     }
 
     /**
