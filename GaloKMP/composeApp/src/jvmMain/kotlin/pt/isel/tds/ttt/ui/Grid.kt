@@ -41,7 +41,10 @@ fun Grid(
             ) {
                 repeat(BOARD_SIZE) { col ->
                     val pos = Position(row*BOARD_SIZE+col)
-                    Cell(board[pos]) { onClick(pos) }
+                    Cell(board[pos],
+                        animation = board.entries.lastOrNull()
+                            ?.let { (p,_) -> pos == p } ?: false
+                    ) { onClick(pos) }
                 }
             }
         }

@@ -10,16 +10,20 @@ import galokmp.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun FrameWindowScope.App(onExit: ()->Unit) {
+fun FrameWindowScope.App(onExit: MutableState<()->Unit>) {
     val scope = rememberCoroutineScope()
-    val vm = remember { AppViewModel(scope) }
+    val vm = remember { AppViewModel(scope).also{
+        val oldOnExit = onExit.value
+        onExit.value = { it.finish(); oldOnExit() }
+    } }
+
     MenuBar {
         Menu("Game") {
             Item("start clash", onClick = vm::start)
             Item("join clash", onClick = vm::join)
             Item("new board", enabled = vm.newAvailable ,onClick = vm::newBoard )
             Item("score", enabled = vm.isRun , onClick = vm::showScore)
-            Item("exit", onClick = { vm.finish(); onExit() })
+            Item("exit", onClick = { onExit.value() })
         }
     }
     MaterialTheme {
@@ -37,13 +41,14 @@ fun FrameWindowScope.App(onExit: ()->Unit) {
 }
 
 fun main() = application {
+    val onExit = remember { mutableStateOf<()->Unit>(::exitApplication) }
     Window(
-        onCloseRequest = {}, //::exitApplication,
+        onCloseRequest = { onExit.value() },
         title = "GaloKMP",
         icon = painterResource(Res.drawable.cross),
         state = WindowState(size= DpSize.Unspecified),
         resizable = false,
     ) {
-        App(::exitApplication)
+        App(onExit)
     }
 }
